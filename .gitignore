@@ -18,3 +18,7 @@ frontend/.env.production.local
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+random_audio.mp3
+random_video.mp4
+result.mp4
+app/speech_audio.mp3
