@@ -40,7 +40,7 @@ function App() {
 
         <p style={{ fontWeight: 'bold' }}>
           Elevate your messages with
-          ReelIt and make your words truly come alive.
+          ReeLit <br/> make your words truly come alive.
         </p>
 
         <div className="input-container">
@@ -48,6 +48,7 @@ function App() {
             id="textInput"
             value={inputText}
             onChange={handleInputChange}
+            style={{ fontWeight: 'bold' }}
             placeholder="Type your text here..."
           />
         </div>
