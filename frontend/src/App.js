@@ -20,11 +20,43 @@ function App() {
     setSelectedLanguage(event.target.value);
   };
 
-  const generateReel = () => {
-    // Add logic for generating the reel based on the inputText, reelDuration, and selectedLanguage
-    // This is where you would make an API call or perform any necessary actions
-    // to create the video reel.
-    console.log(`Generating reel for: ${inputText}, Duration: ${reelDuration}, Language: ${selectedLanguage}`);
+  const generateReel = async () => {
+    try {
+      const postData = {
+        text: inputText,
+        length: reelDuration,
+        language: selectedLanguage
+      };
+
+      const response = await fetch('http://localhost:5000/reelgenerator', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+      });
+
+      if (response.ok) {
+        // Assuming the server responds with a file
+        const blob = await response.blob();
+
+        // Create a URL for the blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a link and trigger a click to download the file
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'generated_reel.mp4'; // Set the desired filename
+        a.click();
+
+        // Clean up the URL object
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error('Error generating reel:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
   };
 
   return (
@@ -82,7 +114,7 @@ function App() {
             {/* Add more language options as needed */}
           </select>
         </div>
-        <button onClick={generateReel}>Generate Reel</button>
+        <button onClick={generateReel} style={{ fontWeight: 'bold' }}>Generate Reel</button>
       </header>
     </div>
   );

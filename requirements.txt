@@ -4,3 +4,4 @@ google-cloud
 google-cloud-storage
 google-api-python-client4
 Flask
+flask-cors
