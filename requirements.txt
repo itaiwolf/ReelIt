@@ -1,0 +1,5 @@
+openai
+moviepy
+google-cloud
+google-cloud-storage
+google-api-python-client
