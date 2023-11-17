@@ -21,7 +21,7 @@ def big_text_to_paragraph(text, length):
   completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-      {"role": "user", "content": "adjust this text to a" + num_words + " words paragraph:" + text}
+      {"role": "user", "content": "adjust this text to a" + str(num_words) + " words paragraph:" + text}
     ],
     temperature=0.6
   )
