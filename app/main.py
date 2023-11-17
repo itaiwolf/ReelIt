@@ -18,15 +18,19 @@ def big_text_to_paragraph(text, length):
     num_words = 65
   else:
     num_words = 110
-  completion = client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[
-      {"role": "user", "content": "adjust this text to a" + str(num_words) + " words paragraph (but no less than 30 words):" + text}
-    ],
-    temperature=0.6
-  )
-
-  shortened_text = completion.choices[0].message.content
+    
+  for i in range(5):
+    completion = client.chat.completions.create(
+      model="gpt-3.5-turbo",
+      messages=[
+        {"role": "user", "content": "adjust this text to a" + str(num_words) + " words paragraph (but no less than 30 words):" + text}
+      ],
+      temperature=0.6
+    )
+    shortened_text = completion.choices[0].message.content
+    num_words = len(shortened_text.split(" "))
+    if (num_words>20):
+      break
   #print("text was converted to a pargraph and there were " + str(len(shortened_text.split(" "))) + " words")
   return shortened_text
 def create_mp3(shortened_text):
