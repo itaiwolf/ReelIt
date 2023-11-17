@@ -1,12 +1,16 @@
 // app.js
 
 import React, { useState } from 'react';
+import ReactLoading from 'react-loading';
+import Confetti from 'react-confetti'
 import './App.css'; // Import the CSS file for styling
 
 function App() {
   const [inputText, setInputText] = useState('');
+  const [confetti, setConfetti] = useState(false);
   const [reelDuration, setReelDuration] = useState('medium'); // Default to medium
   const [selectedLanguage, setSelectedLanguage] = useState('en-US'); // Default to English
+  const [loading, setLoading] = useState(false); // New state for loading indicator
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);
@@ -22,13 +26,15 @@ function App() {
 
   const generateReel = async () => {
     try {
+      setLoading(true); // Set loading to true when making the request
+      setInputText("")
       const postData = {
         text: inputText,
         length: reelDuration,
         language: selectedLanguage
       };
 
-      const response = await fetch('http://localhost:5000/reelgenerator', {
+      const response = await fetch('http://172.20.16.243:5000/reelgenerator', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -53,14 +59,28 @@ function App() {
         window.URL.revokeObjectURL(url);
       } else {
         console.error('Error generating reel:', response.statusText);
+      setLoading(false); // Set loading back to false when the request is complete
+
       }
     } catch (error) {
       console.error('Error:', error.message);
+      setLoading(false); // Set loading back to false when the request is complete
+
+    }
+    finally {
+      setLoading(false); // Set loading back to false when the request is complete
+      setConfetti(true)
     }
   };
 
   return (
     <div className="app">
+      {
+        confetti ? 
+        <Confetti recycle={false}
+        />:
+          <></>
+      }
       <video className="video-background" autoPlay loop muted>
         <source src={process.env.PUBLIC_URL + "/my_video.mp4"} type="video/mp4" />
         Your browser does not support the video tag.
@@ -72,7 +92,7 @@ function App() {
 
         <p style={{ fontWeight: 'bold' }}>
           Elevate your messages with
-          ReeLit <br/> make your words truly come alive.
+          ReeLit make your words truly come alive.
         </p>
 
         <div className="input-container">
@@ -80,7 +100,7 @@ function App() {
             id="textInput"
             value={inputText}
             onChange={handleInputChange}
-            style={{ fontWeight: 'bold' }}
+            style={{ fontWeight: 'bold', height: "100px", resize: 'none' }}
             placeholder="Type your text here..."
           />
         </div>
@@ -115,7 +135,12 @@ function App() {
             {/* Add more language options as needed */}
           </select>
         </div>
-        <button onClick={generateReel} style={{ fontWeight: 'bold' }}>Generate Reel</button>
+        <button onClick={generateReel} style={{ fontWeight: 'bold' }} disabled={loading}>
+        {loading ?<>
+          <ReactLoading type="spin" color="#fff" />
+        </>  
+         : 'Generate Reel'}
+        </button>
       </header>
     </div>
   );
