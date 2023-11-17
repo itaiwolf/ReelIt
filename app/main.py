@@ -27,6 +27,7 @@ def big_text_to_paragraph(text, length):
   )
 
   shortened_text = completion.choices[0].message.content
+  print("text was converted to a pargraph and there were" + str(len(shortened_text.split(" "))) + " words")
   return shortened_text
 def create_mp3(shortened_text):
   # convert paragraph to mp3
