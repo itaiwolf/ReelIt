@@ -34,7 +34,7 @@ function App() {
         language: selectedLanguage
       };
 
-      const response = await fetch('http://172.20.16.243:5000/reelgenerator', {
+      const response = await fetch('http://localhost:5000/reelgenerator', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -77,7 +77,7 @@ function App() {
     <div className="app">
       {
         confetti ? 
-        <Confetti recycle={false}
+        <Confetti recycle={true}
         />:
           <></>
       }

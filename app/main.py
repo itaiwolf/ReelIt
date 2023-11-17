@@ -29,10 +29,13 @@ def big_text_to_paragraph(text, length):
     )
     shortened_text = completion.choices[0].message.content
     num_words = len(shortened_text.split(" "))
+    print(num_words)
     if (num_words>20):
       break
   #print("text was converted to a pargraph and there were " + str(len(shortened_text.split(" "))) + " words")
   return shortened_text
+
+
 def create_mp3(shortened_text):
   # convert paragraph to mp3
   response = client.audio.speech.create(
