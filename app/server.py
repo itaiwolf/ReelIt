@@ -19,7 +19,7 @@ def handle_post_request():
     length = data.get("length")
     language = data.get("language")
 
-    main_script(text)
+    main_script(text, length)
 
     video_path = '../result.mp4'
     
@@ -30,4 +30,4 @@ def handle_post_request():
     return send_file(video_path, mimetype=mime_type)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0",debug=True)
