@@ -10,18 +10,24 @@ SPEECH_FILE_PATH = Path(__file__).parent / MP3_FILE_NAME
 SHORTEN_TEXT = True
 CREATE_MP3 = True
 
-def big_text_to_paragraph(text):
+def big_text_to_paragraph(text, length):
   # convert big text to paragraph
-
+  if(length == "short"):
+    num_words = 30
+  elif(length == "medium"):
+    num_words = 65
+  else:
+    num_words = 110
   completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-      {"role": "user", "content": "adjust this text to a 60 words paragraph: {}".format(text)}
+      {"role": "user", "content": "adjust this text to a" + str(num_words) + " words paragraph:" + text}
     ],
     temperature=0.6
   )
 
   shortened_text = completion.choices[0].message.content
+  print("text was converted to a pargraph and there were" + str(len(shortened_text.split(" "))) + " words")
   return shortened_text
 def create_mp3(shortened_text):
   # convert paragraph to mp3
@@ -49,12 +55,12 @@ def combine_audio(vidname, speech_audio,random_audio, outname, fps=60,reduction_
     final_clip = my_clip.set_audio(mixed)
     final_clip.write_videofile(outname,fps=fps)
 
-def main_script(text):
+def main_script(text, length):
   shortened_text = "This is a test without shortening"
   status = retrieve_random_video_and_audio_from_bucket(bucket_name="reelit", destination_video_path="random_video.mp4",destination_audio_path="random_audio.mp3", service_account_file="key.json")
   if status == "success":
     if (SHORTEN_TEXT):
-      shortened_text = big_text_to_paragraph(text)
+      shortened_text = big_text_to_paragraph(text, length)
     if (CREATE_MP3):
       create_mp3(shortened_text)
     combine_audio("random_video.mp4", MP3_FILE_NAME,"random_audio.mp3", "result.mp4") # i create a new file
