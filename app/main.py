@@ -48,6 +48,8 @@ def combine_audio(vidname, speech_audio,random_audio, outname, fps=60,reduction_
     my_clip = mpe.VideoFileClip(vidname)
     
     speech_audio = mpe.AudioFileClip("app/"+speech_audio)
+    speech_audio = speech_audio.volumex(2)
+
     # trim video
     my_clip = my_clip.subclip(0,speech_audio.duration)
     

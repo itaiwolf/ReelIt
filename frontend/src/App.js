@@ -92,7 +92,7 @@ function App() {
 
         <p style={{ fontWeight: 'bold' }}>
           Elevate your messages with
-          ReeLit make your words truly come alive.
+          ReeLit and make your words truly come alive.
         </p>
 
         <div className="input-container">
