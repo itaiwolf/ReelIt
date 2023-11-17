@@ -13,11 +13,11 @@ CREATE_MP3 = True
 def big_text_to_paragraph(text, length):
   # convert big text to paragraph
   if(length == "short"):
-    num_words = 20
+    num_words = 30
   elif(length == "medium"):
-    num_words = 55
+    num_words = 65
   else:
-    num_words = 100
+    num_words = 110
   completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
