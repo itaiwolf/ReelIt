@@ -8,11 +8,13 @@ import './App.css'; // Import the CSS file for styling
 function App() {
   const [inputText, setInputText] = useState('');
   const [confetti, setConfetti] = useState(false);
+  const [inputError, setInputError] = useState(false);
   const [reelDuration, setReelDuration] = useState('medium'); // Default to medium
   const [selectedLanguage, setSelectedLanguage] = useState('en-US'); // Default to English
   const [loading, setLoading] = useState(false); // New state for loading indicator
 
   const handleInputChange = (event) => {
+    setInputError(false)
     setInputText(event.target.value);
   };
 
@@ -28,6 +30,11 @@ function App() {
     try {
       setLoading(true); // Set loading to true when making the request
       setInputText("")
+
+      // Check if inputText is empty
+      if (!inputText.trim()) {
+        throw new Error('Please enter text before generating the reel.');
+    }
       const postData = {
         text: inputText,
         length: reelDuration,
@@ -68,7 +75,7 @@ function App() {
     } catch (error) {
       console.error('Error:', error.message);
       setLoading(false); // Set loading back to false when the request is complete
-      
+      setInputError(true);
 
     }
     finally {
@@ -80,7 +87,7 @@ function App() {
     <div className="app">
       {
         confetti ? 
-        <Confetti recycle={true}
+        <Confetti recycle={false} numberOfPieces={1000} gravity={0.6}
         />:
           <></>
       }
@@ -98,12 +105,16 @@ function App() {
           ReeLit and make your words truly come alive.
         </p>
 
-        <div className="input-container">
-          <textarea
+        <div >
+          <textarea 
             id="textInput"
             value={inputText}
             onChange={handleInputChange}
-            style={{ fontWeight: 'bold', height: "100px", resize: 'none' }}
+            style={{ fontWeight: 'bold', 
+            height: "100px", 
+            resize: 'none' ,
+            border:`1px solid ${inputError ? 'red' : '#ccc'}`
+          }}
             placeholder="Type your text here..."
           />
         </div>
