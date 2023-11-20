@@ -1,14 +1,12 @@
-from pathlib import Path
 from openai import OpenAI
 import moviepy.editor as mpe
 from retrieve_media import retrieve_random_video_and_audio_from_bucket
+from parameters import MEDIA_DIRECTORY_NAME,CREATE_MP3,MP3_FILE_NAME,SHORTEN_TEXT,SPEECH_FILE_PATH,BUCKET_NAME,SERVICE_ACCOUNT_FILE,OUTPUT_FILE_NAME
+from pathlib import Path
+
 
 client = OpenAI()
 
-MP3_FILE_NAME = "speech_audio.mp3"
-SPEECH_FILE_PATH = Path(__file__).parent / MP3_FILE_NAME
-SHORTEN_TEXT = True
-CREATE_MP3 = True
 
 def big_text_to_paragraph(text, length):
   # convert big text to paragraph
@@ -29,7 +27,7 @@ def big_text_to_paragraph(text, length):
     )
     shortened_text = completion.choices[0].message.content
     num_words = len(shortened_text.split(" "))
-    print(num_words)
+    print("text was adjusted to "+str(num_words) +" words.")
     if (num_words>20):
       break
   #print("text was converted to a pargraph and there were " + str(len(shortened_text.split(" "))) + " words")
@@ -45,31 +43,34 @@ def create_mp3(shortened_text):
     speed=1, 
   )
 
-  response.stream_to_file(SPEECH_FILE_PATH)
+  response.stream_to_file(str(Path(MEDIA_DIRECTORY_NAME) / SPEECH_FILE_PATH))
 
 def combine_audio(vidname, speech_audio,random_audio, outname, fps=60,reduction_factor=0.1): 
-    my_clip = mpe.VideoFileClip(vidname)
+    my_clip = mpe.VideoFileClip(MEDIA_DIRECTORY_NAME+"/"+vidname)
     
-    speech_audio = mpe.AudioFileClip("app/"+speech_audio)
+    speech_audio = mpe.AudioFileClip(MEDIA_DIRECTORY_NAME+"/"+speech_audio)
     speech_audio = speech_audio.volumex(2)
 
     # trim video
     my_clip = my_clip.subclip(0,speech_audio.duration)
     
-    random_audio = mpe.AudioFileClip(random_audio)
+    random_audio = mpe.AudioFileClip(MEDIA_DIRECTORY_NAME+"/"+random_audio)
     random_audio = random_audio.subclip(0,speech_audio.duration)
     random_audio = random_audio.volumex(reduction_factor)
     mixed = mpe.CompositeAudioClip([speech_audio, random_audio],)
     
     final_clip = my_clip.set_audio(mixed)
-    final_clip.write_videofile(outname,fps=fps)
+    final_clip.write_videofile(MEDIA_DIRECTORY_NAME+"/"+outname,fps=fps)
 
 def main_script(text, length):
   shortened_text = "This is a test without shortening"
-  status = retrieve_random_video_and_audio_from_bucket(bucket_name="reelit", destination_video_path="random_video.mp4",destination_audio_path="random_audio.mp3", service_account_file="key.json")
+  status = retrieve_random_video_and_audio_from_bucket(bucket_name=BUCKET_NAME, destination_video_path=MEDIA_DIRECTORY_NAME+"/random_video.mp4",destination_audio_path=MEDIA_DIRECTORY_NAME+"/random_audio.mp3", service_account_file=SERVICE_ACCOUNT_FILE)
   if status == "success":
     if (SHORTEN_TEXT):
       shortened_text = big_text_to_paragraph(text, length)
     if (CREATE_MP3):
       create_mp3(shortened_text)
-    combine_audio("random_video.mp4", MP3_FILE_NAME,"random_audio.mp3", "result.mp4") # i create a new file
+    combine_audio("random_video.mp4", MP3_FILE_NAME,"random_audio.mp3", OUTPUT_FILE_NAME) # i create a new file
+    return "success"
+  else:
+    return "failed"

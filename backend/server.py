@@ -1,8 +1,12 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file,jsonify
 from main import main_script
 from flask_cors import CORS  # Import CORS from flask_cors
+from parameters import MEDIA_DIRECTORY_NAME,OUTPUT_FILE_NAME
+
 app = Flask(__name__)
+
 CORS(app)  # Enable CORS for all routes
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/')
 def checkalive():
@@ -15,13 +19,16 @@ def handle_post_request():
 
     text = data.get("text")
 
-    # TODO: add support for those
     length = data.get("length")
+    # TODO: add support for this
     language = data.get("language")
 
-    main_script(text, length)
+    status_code = main_script(text, length)
 
-    video_path = '../result.mp4'
+    if (status_code != "success"):
+        return jsonify({'error': 'Something went wrong'}), 500
+
+    video_path = MEDIA_DIRECTORY_NAME+'/'+OUTPUT_FILE_NAME
     
     # Specify the MIME type for MP4
     mime_type = 'video/mp4'

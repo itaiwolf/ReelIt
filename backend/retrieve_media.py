@@ -1,8 +1,11 @@
 from google.cloud import storage
 import random
-
+import os
+from parameters import MEDIA_DIRECTORY_NAME
 def retrieve_random_video_and_audio_from_bucket(bucket_name, destination_video_path,destination_audio_path, service_account_file):
     try:
+        if not os.path.exists(MEDIA_DIRECTORY_NAME):
+            os.mkdir(MEDIA_DIRECTORY_NAME)
         # Initialize a GCS client
         client = storage.Client.from_service_account_json(service_account_file)
 
@@ -36,9 +39,9 @@ def retrieve_random_video_and_audio_from_bucket(bucket_name, destination_video_p
         # Download the random blob to the specified file path
         random_audio.download_to_filename(destination_audio_path)
 
-        print(f"audio object '{random_audio.name}' retrieved and saved to '{destination_audio_path}'.")
+        print(f"Audio object '{random_audio.name}' retrieved and saved to '{destination_audio_path}'.")
         return "success"
     except Exception as e:
         print(f"Error: {e}")
         return "failed"
-
+# hey mom you are very nice. i like that you always remember to give me your car keys

@@ -57,19 +57,22 @@ function App() {
 
         // Clean up the URL object
         window.URL.revokeObjectURL(url);
+        setConfetti(true)
+
       } else {
         console.error('Error generating reel:', response.statusText);
-      setLoading(false); // Set loading back to false when the request is complete
+        setLoading(false); // Set loading back to false when the request is complete
+      
 
       }
     } catch (error) {
       console.error('Error:', error.message);
       setLoading(false); // Set loading back to false when the request is complete
+      
 
     }
     finally {
       setLoading(false); // Set loading back to false when the request is complete
-      setConfetti(true)
     }
   };
 
