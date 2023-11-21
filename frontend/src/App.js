@@ -3,15 +3,26 @@
 import React, { useState } from 'react';
 import ReactLoading from 'react-loading';
 import Confetti from 'react-confetti'
+import Select from 'react-select';
+import { ToastContainer, toast } from 'react-toastify';
 import './App.css'; // Import the CSS file for styling
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [inputText, setInputText] = useState('');
   const [confetti, setConfetti] = useState(false);
   const [inputError, setInputError] = useState(false);
   const [reelDuration, setReelDuration] = useState('medium'); // Default to medium
-  const [selectedLanguage, setSelectedLanguage] = useState('en-US'); // Default to English
+  const [selectedLanguage, setSelectedLanguage] = useState('en'); // Default to English
   const [loading, setLoading] = useState(false); // New state for loading indicator
+
+  const languageOptions = [
+    { value: 'en', label: 'English' },
+    { value: 'es', label: 'Espanol' },
+    { value: 'fr', label: 'French' },
+    { value: 'zh', label: 'Chinese' },
+     {/* Add more language options as needed */}
+  ];
 
   const handleInputChange = (event) => {
     setInputError(false)
@@ -22,19 +33,17 @@ function App() {
     setReelDuration(duration);
   };
 
-  const handleLanguageChange = (event) => {
-    setSelectedLanguage(event.target.value);
-  };
-
   const generateReel = async () => {
     try {
-      setLoading(true); // Set loading to true when making the request
-      setInputText("")
-
       // Check if inputText is empty
       if (!inputText.trim()) {
-        throw new Error('Please enter text before generating the reel.');
+        setInputError(true);
+        toast.error("No empty text :)")
+        return
     }
+      setLoading(true); // Set loading to true when making the request
+      setInputText("")
+      
       const postData = {
         text: inputText,
         length: reelDuration,
@@ -65,17 +74,18 @@ function App() {
         // Clean up the URL object
         window.URL.revokeObjectURL(url);
         setConfetti(true)
+        setInputError(false)
+        toast.success("Reel generated successfully!")
 
       } else {
         console.error('Error generating reel:', response.statusText);
         setLoading(false); // Set loading back to false when the request is complete
-      
-
+        toast.error("Error generating reel. Please try again later.")
       }
     } catch (error) {
       console.error('Error:', error.message);
       setLoading(false); // Set loading back to false when the request is complete
-      setInputError(true);
+      toast.error("Error generating reel. Please try again later.")
 
     }
     finally {
@@ -139,24 +149,37 @@ function App() {
             Long
           </button>
         </div>
-        <div className="language-selector">
-          <label htmlFor="languageSelect">Select Language:</label>
-          <select id="languageSelect" value={selectedLanguage} onChange={handleLanguageChange}>
-            <option value="en-US">English</option>
-            <option value="fr">French</option>
-            <option value="es">Espanol</option>
-            <option value="zh">Chinese</option>
-            {/* Add more language options as needed */}
-          </select>
+        <div className="language-selector" >
+          <p className="video-length-title">Language:</p>
+          <div style={{textAlign: "center",margin: "10px"}}>
+          <Select
+            onChange={setSelectedLanguage}
+            options={languageOptions}
+            placeholder={"English"}
+            />
+            </div>
         </div>
         <button onClick={generateReel} style={{ fontWeight: 'bold' }} disabled={loading}>
         {loading ?<>
-          <ReactLoading type="spin" color="#fff" />
+          <ReactLoading type="bars" color="#fff" />
         </>  
          : 'Generate Reel'}
         </button>
       </header>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={true}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover={false}
+          theme="light"
+          />
     </div>
+    
   );
 }
 

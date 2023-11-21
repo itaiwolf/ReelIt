@@ -8,3 +8,4 @@ CREATE_MP3 = True
 BUCKET_NAME="reelit"
 SERVICE_ACCOUNT_FILE = "key.json"
 OUTPUT_FILE_NAME="output_reel.mp4"
+CHATGPT_MODEL = "gpt-4"

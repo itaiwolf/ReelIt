@@ -1,5 +1,5 @@
 from flask import Flask, request, send_file,jsonify
-from main import main_script
+from main_script import main_script
 from flask_cors import CORS  # Import CORS from flask_cors
 from parameters import MEDIA_DIRECTORY_NAME,OUTPUT_FILE_NAME
 

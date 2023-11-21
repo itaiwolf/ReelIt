@@ -1,7 +1,7 @@
 from openai import OpenAI
 import moviepy.editor as mpe
 from retrieve_media import retrieve_random_video_and_audio_from_bucket
-from parameters import MEDIA_DIRECTORY_NAME,CREATE_MP3,MP3_FILE_NAME,SHORTEN_TEXT,SPEECH_FILE_PATH,BUCKET_NAME,SERVICE_ACCOUNT_FILE,OUTPUT_FILE_NAME
+from parameters import MEDIA_DIRECTORY_NAME,CREATE_MP3,MP3_FILE_NAME,SHORTEN_TEXT,SPEECH_FILE_PATH,BUCKET_NAME,SERVICE_ACCOUNT_FILE,OUTPUT_FILE_NAME,CHATGPT_MODEL
 from pathlib import Path
 
 
@@ -19,7 +19,7 @@ def big_text_to_paragraph(text, length):
     
   for i in range(5):
     completion = client.chat.completions.create(
-      model="gpt-3.5-turbo",
+      model=CHATGPT_MODEL,
       messages=[
         {"role": "user", "content": "adjust this text to a" + str(num_words) + " words paragraph (but no less than 30 words):" + text}
       ],
